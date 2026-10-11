@@ -7,7 +7,85 @@ An enterprise multi-agent core-banking system constructed with **LangGraph**, **
 ## 🏛️ Architecture Overview
 
 The system mirrors modern enterprise AI banking architecture:
+flowchart TB
+    subgraph channels["1. Banking Channels / Clients"]
+        direction LR
+        spa["React SPA<br/>Vite + Tailwind / Glassmorphism"]
+        dashboard["Streamlit Conversational Dashboard"]
+    end
 
+    subgraph apiLayer["2. API & Experience Layer"]
+        gateway["FastAPI REST Gateway<br/>/api/chat · /api/hitl/decision · /api/ledger/tables"]
+    end
+
+    subgraph guardrails["3. AI Control Plane & Guardrails"]
+        overdraft["Overdraft Rejection Protection"]
+        pii["PII & Permission Enforcement<br/>KYC verified / risk-tier cutoffs"]
+        hitlPolicy{"HITL Safety Gate"}
+        transferPolicy["Transfers over $5,000<br/>Human sign-off"]
+        creditPolicy["Credit disbursements over $20,000<br/>Underwriter sign-off"]
+        hitlPolicy --> transferPolicy & creditPolicy
+    end
+
+    subgraph orchestrator["4. Multi-Agent Orchestrator — LangGraph Stateful Graph"]
+        supervisor["Supervisor Node<br/>Intent classifier, router & state coordinator"]
+        accounts["Account Services Agent<br/>Ledger, balances & atomic P2P transfers"]
+        fraud["Fraud & Risk Agent<br/>Risk scoring, anomaly engine & card locks"]
+        credit["Credit & Lending Agent<br/>DTI analysis, FICO APR tiers & underwriting"]
+        hitlGate["HITL Gate<br/>Graph interrupt & resume"]
+        supervisor --> accounts & fraud & credit
+        supervisor --> hitlGate
+    end
+
+    subgraph tools["5. Agent Tools — Pydantic v2 Schemas"]
+        overview["get_account_overview(customer_id)"]
+        transfer["execute_transfer(source_acc, dest_acc, amount, memo)"]
+        card["flag_or_block_card(account_id, reason, action)"]
+        risk["assess_transaction_risk(tx_id) → RiskReport"]
+        evaluate["evaluate_credit_application(customer_id, requested_amount, monthly_income)"]
+    end
+
+    subgraph data["6. Enterprise Data & Ledger — SQLite via SQLAlchemy"]
+        customers[("customers<br/>Alice Martin, Bob Chen, Charlie Davis")]
+        accountsDb[("accounts<br/>Checking, Savings, Credit Cards")]
+        transactions[("transactions<br/>Ledger history, velocity & flags")]
+        loans[("loans<br/>Underwritten credit contracts")]
+        audit[("audit_logs<br/>Immutable audit ledger")]
+    end
+
+    spa --> gateway
+    dashboard --> gateway
+    gateway --> overdraft & pii & hitlPolicy
+    overdraft --> supervisor
+    pii --> supervisor
+    hitlPolicy --> hitlGate
+
+    accounts --> overview & transfer
+    fraud --> card & risk
+    credit --> evaluate
+    hitlGate --> transferPolicy & creditPolicy
+
+    overview --> customers & accountsDb
+    transfer --> accountsDb & transactions & audit
+    card --> accountsDb & audit
+    risk --> transactions & audit
+    evaluate --> customers & loans & audit
+
+    classDef channel fill:#eef2ff,stroke:#818cf8,color:#1e1b4b
+    classDef api fill:#ecfeff,stroke:#22d3ee,color:#083344
+    classDef guard fill:#fefce8,stroke:#facc15,color:#422006
+    classDef agent fill:#f5f3ff,stroke:#a78bfa,color:#2e1065
+    classDef tool fill:#f0fdfa,stroke:#2dd4bf,color:#042f2e
+    classDef database fill:#f0fdf4,stroke:#4ade80,color:#052e16
+    classDef critical fill:#fef2f2,stroke:#f87171,color:#450a0a
+
+    class spa,dashboard channel
+    class gateway api
+    class overdraft,pii guard
+    class hitlPolicy,transferPolicy,creditPolicy,hitlGate critical
+    class supervisor,accounts,fraud,credit agent
+    class overview,transfer,card,risk,evaluate tool
+    class customers,accountsDb,transactions,loans,audit database
 ```text
 1. BANKING CHANNELS / CLIENTS
    ├── React Single-Page Application (Vite + Tailwind / Glassmorphism)
