@@ -1,4 +1,4 @@
-# Apex OmniBank: Production-Grade Simulated Banking Multi-Agent System
+# BHARAT APEX BANK: Production-Grade Simulated Banking Multi-Agent System
 
 An enterprise multi-agent core-banking system constructed with **LangGraph**, **FastAPI**, **SQLite (SQLAlchemy)**, **Pydantic v2**, and modern dual frontends (**React** + **Streamlit**).
 
