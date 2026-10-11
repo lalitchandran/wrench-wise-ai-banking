@@ -7,12 +7,8 @@ An enterprise multi-agent core-banking system constructed with **LangGraph**, **
 ## 🏛️ Architecture Overview
 
 The system mirrors modern enterprise AI banking architecture:
-flowchart TB
-    subgraph channels["1. Banking Channels / Clients"]
-        direction LR
-        spa["React SPA<br/>Vite + Tailwind / Glassmorphism"]
-        dashboard["Streamlit Conversational Dashboard"]
-    end
+<img width="1143" height="856" alt="image" src="https://github.com/user-attachments/assets/1f85f1b5-9a8a-4d06-a261-2b7cf3cdf1d9" />
+
 
     subgraph apiLayer["2. API & Experience Layer"]
         gateway["FastAPI REST Gateway<br/>/api/chat · /api/hitl/decision · /api/ledger/tables"]
