@@ -62,7 +62,9 @@ The system mirrors modern enterprise AI banking architecture:
 ### Single Batch File (`run_all.bat`)
 Double-click `run_all.bat` or run:
 ```cmd
-run_all.bat
+-->ls
+-->cd lc
+-->.\run_all.bat
 ```
 This automatically:
 1. Installs Python dependencies (`requirements.txt`).
